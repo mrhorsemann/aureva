@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Aureva - Luxury Marketplace</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f2f6f3;
+      color: #2c2c2c;
+    }
+
+    header {
+      background-color: #0d001e;
+      color: #f9f9f9;
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      font-weight: bold;
+      color: #A57b01;
+    }
+
+    nav a {
+      color: #f9f9f9;
+      text-decoration: none;
+      margin: 0 1rem;
+      font-weight: 500;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    .hero {
+      background: linear-gradient(to right, #d9cba3, #eae1cd);
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+
+    .hero h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: #0d001e;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      color: #4a3d00;
+    }
+
+    .info-section {
+      padding: 3rem 2rem;
+      background-color: #ffffff;
+      color: #0d001e;
+      text-align: center;
+    }
+
+    .info-section h2 {
+      color: #A57b01;
+    }
+
+    .info-section p {
+      max-width: 800px;
+      margin: 0.5rem auto;
+      line-height: 1.6;
+    }
+
+    .categories-section {
+      background: #ffffff;
+      padding: 3rem 2rem;
+      text-align: center;
+    }
+
+    .categories-section h2 {
+      color: #A57b01;
+    }
+
+    .categories {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      padding: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .category-box {
+      background: #ffffff;
+      border: 2px solid #A57b01;
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      width: 280px;
+      transition: transform 0.2s ease;
+    }
+
+    .category-box:hover {
+      transform: scale(1.03);
+    }
+
+    .category-box img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .category-box h3 {
+      margin: 0.5rem 0;
+      color: #1d3e2b;
+    }
+
+    .category-box p {
+      margin: 0;
+      font-size: 0.95rem;
+      color: #333;
+    }
+
+    .category-box a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      padding: 2rem;
+    }
+
+    .product-card {
+      background: #ffffff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+      transition: transform 0.3s ease;
+      border: 1px solid #A57b01;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .product-card img {
+      width: 100%;
+      height: auto;
+    }
+
+    .product-info {
+      padding: 1rem;
+    }
+
+    .product-info h3 {
+      margin: 0;
+      font-size: 1.25rem;
+      color: #0d001e;
+    }
+
+    .product-info p {
+      color: #5a7d65;
+      margin: 0.5rem 0;
+    }
+
+    footer {
+      background-color: #0d001e;
+      color: white;
+      text-align: center;
+      padding: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    h2.section-title {
+      text-align: center;
+      color: #0d001e;
+      margin-top: 3rem;
+    }
+
+    .contact {
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .contact h2 {
+      color: #0d001e;
+    }
+
+    .contact p {
+      margin: 0.5rem 0;
+    }
+
+    .contact a {
+      color: #A57b01;
+      text-decoration: none;
+    }
+
+    .contact a:hover {
+      text-decoration: underline;
+    }
+
+    #map {
+      height: 600px;
+      margin: 2rem auto;
+      width: 90%;
+      border-radius: 12px;
+      border: 2px solid #A57b01;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Aureva</h1>
+    <nav>
+      <a href="#home">Home</a>
+      <a href="#categories">Categories</a>
+      <a href="#contact">Contact</a>
+      <a href="#sell">Sell</a>
+    </nav>
+  </header>
+
+  <section id="home" class="hero">
+    <h2>Discover Timeless Luxury</h2>
+    <p>Explore and trade prestigious items, vehicles, and estates with elegance and ease.</p>
+  </section>
+
+  <section id="categories" class="categories-section">
+    <h2>Explore Our Categories</h2>
+    <div class="categories">
+      <a href="#vehicles" class="category-box">
+        <img src="https://cdn.pixabay.com/photo/2020/07/10/09/03/car-5390913_1280.jpg" alt="Luxury Vehicles">
+        <h3>Luxury Vehicles</h3>
+        <p>Prestigious brands and rare models.</p>
+      </a>
+      <a href="#real-estate" class="category-box">
+        <img src="https://cdn.pixabay.com/photo/2016/11/29/09/08/architecture-1867187_1280.jpg" alt="Real Estate">
+        <h3>Real Estate</h3>
+        <p>Exclusive villas, penthouses, and more.</p>
+      </a>
+    </div>
+  </section>
+
+  <section id="vehicles" class="products">
+    <h2 class="section-title">Luxury Vehicles</h2>
+    <div class="product-card">
+      <img src="https://cdn.pixabay.com/photo/2015/01/19/13/51/rolls-royce-604471_960_720.jpg" alt="Rolls Royce">
+      <div class="product-info">
+        <h3>Rolls Royce Phantom</h3>
+        <p>$500,000</p>
+      </div>
+    </div>
+    <div class="product-card">
+      <img src="https://cdn.pixabay.com/photo/2020/04/14/16/35/lamborghini-5043792_960_720.jpg" alt="Lamborghini Urus">
+      <div class="product-info">
+        <h3>Lamborghini Urus</h3>
+        <p>$250,000</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="real-estate" class="products">
+    <h2 class="section-title">Prestige Real Estate</h2>
+    <div class="product-card">
+      <img src="https://cdn.pixabay.com/photo/2016/11/29/09/08/architecture-1867187_960_720.jpg" alt="Villa">
+      <div class="product-info">
+        <h3>Seaside Villa - Tangier</h3>
+        <p>$12,000,000</p>
+      </div>
+    </div>
+    <div class="product-card">
+      <img src="https://cdn.pixabay.com/photo/2016/11/22/19/15/house-1846667_960_720.jpg" alt="Penthouse">
+      <div class="product-info">
+        <h3>Skyline Penthouse - Casablanca</h3>
+        <p>$18,500,000</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="info-section">
+    <h2>Properties Across Morocco</h2>
+    <div id="map"></div>
+  </section>
+
+  <section class="info-section">
+    <h2>About Aureva</h2>
+    <p>Aureva is a luxury marketplace that connects discerning buyers and elite sellers across Morocco. Whether it's a lavish seaside villa, a rare supercar, or a high-end penthouse, Aureva delivers elegance at every step.</p>
+  </section>
+
+  <section class="info-section">
+    <h2>Mr. Horseman - Our Expert Curator</h2>
+    <p>Mr. Horseman brings decades of experience in luxury goods and high-value transactions. With his refined taste and deep knowledge of the market, he ensures that only the finest properties, vehicles, and assets make their way to Aureva. A trusted advisor for the elite.</p>
+  </section>
+
+  <section id="contact" class="contact">
+    <h2>Contact Us</h2>
+    <p>Phone: +212 770714943</p>
+    <p>Email: <a href="mailto:support@aureva.com">support@aureva.com</a></p>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 Aureva. All rights reserved.</p>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+  <script>
+    var map = L.map('map', {
+      minZoom: 6,
+      maxZoom: 7,
+      zoomControl: false,
+      attributionControl: false
+    }).setView([31.7917, -7.0926], 6); // Morocco's center
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    const cities = [
+      { name: 'Casablanca', coords: [33.5731, -7.5898] },
+      { name: 'Marrakech', coords: [31.6295, -7.9811] },
+      { name: 'Tangier', coords: [35.7595, -5.8339] },
+      { name: 'Rabat', coords: [34.0209, -6.8416] },
+      { name: 'Agadir', coords: [30.4278, -9.5981] },
+      { name: 'Fez', coords: [34.0331, -5.0003] }
+    ];
+
+    cities.forEach(city => {
+      L.circleMarker(city.coords, {
+        radius: 10,
+        fillColor: '#A57b01',
+        color: '#0d001e',
+        weight: 2,
+        opacity: 1,
+        fillOpacity: 0.8
+      }).addTo(map).bindPopup(`<strong>${city.name}</strong><br/>Luxury Properties Available`);
+    });
+  </script>
+</body>
+</html>
+
